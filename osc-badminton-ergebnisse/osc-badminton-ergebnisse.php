@@ -252,7 +252,8 @@ class OSC_Badminton_Ergebnisse {
             $html .= '<td class="osc-team osc-home">' . esc_html( $match['home'] ) . '</td>';
             $html .= '<td class="osc-vs">:</td>';
             $html .= '<td class="osc-team osc-guest">' . esc_html( $match['guest'] ) . '</td>';
-            $html .= '<td class="osc-result ' . esc_attr( $result_class ) . '">' . esc_html( $match['result'] ) . '</td>';
+            $display_result = str_replace( array( '{', '}' ), '', $match['result'] );
+            $html .= '<td class="osc-result ' . esc_attr( $result_class ) . '">' . esc_html( $display_result ) . '</td>';
             $html .= '<td class="osc-venue osc-hide-mobile">' . esc_html( $match['venue'] ) . '</td>';
             $html .= '</tr>';
         }
