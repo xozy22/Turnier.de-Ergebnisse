@@ -1,0 +1,49 @@
+/* OSC Badminton Ergebnisse - Admin Styles */
+
+.osc-badminton-admin .osc-team-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex-wrap: wrap;
+}
+
+.osc-badminton-admin .osc-team-number {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #003399;
+    min-width: 1.5em;
+    align-self: center;
+}
+
+.osc-badminton-admin .osc-team-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-weight: 600;
+    font-size: 0.85em;
+    color: #555;
+}
+
+.osc-badminton-admin .osc-remove-team {
+    color: #a00;
+    font-size: 1.4em;
+    line-height: 1;
+    padding: 2px 8px !important;
+    align-self: center;
+}
+
+.osc-badminton-admin .osc-remove-team:hover {
+    color: #dc3232;
+    background: #fbeaea !important;
+}
+
+.osc-badminton-admin #osc-cache-status {
+    margin-left: 10px;
+    font-style: italic;
+    color: #46b450;
+}
