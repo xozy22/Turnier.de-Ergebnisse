@@ -4,23 +4,22 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class OSC_Badminton_Scraper {
+class Badminton_Ergebnisse_Scraper {
 
     private $cache_hours;
     private $cookie_file;
 
     public function __construct() {
-        $this->cache_hours = intval( get_option( 'osc_badminton_cache_hours', 6 ) );
+        $this->cache_hours = intval( get_option( 'badminton_ergebnisse_cache_hours', 6 ) );
         $upload_dir = wp_upload_dir();
-        $this->cookie_file = $upload_dir['basedir'] . '/osc-badminton-cookies.txt';
+        $this->cookie_file = $upload_dir['basedir'] . '/badminton-ergebnisse-cookies.txt';
     }
 
     /**
      * Get all data for a team: standings + matches.
-     * Accepts either a team overview URL or a matches URL.
      */
     public function get_team_data( $url ) {
-        $cache_key = 'osc_badminton_data_' . md5( $url );
+        $cache_key = 'bdm_data_' . md5( $url );
 
         $cached = get_transient( $cache_key );
         if ( false !== $cached ) {
@@ -37,7 +36,7 @@ class OSC_Badminton_Scraper {
     }
 
     public function get_matches( $url ) {
-        $cache_key = 'osc_badminton_' . md5( $url );
+        $cache_key = 'bdm_matches_' . md5( $url );
 
         $cached = get_transient( $cache_key );
         if ( false !== $cached ) {
@@ -55,15 +54,15 @@ class OSC_Badminton_Scraper {
 
     public function clear_cache( $url = '' ) {
         if ( ! empty( $url ) ) {
-            delete_transient( 'osc_badminton_' . md5( $url ) );
-            delete_transient( 'osc_badminton_data_' . md5( $url ) );
+            delete_transient( 'bdm_matches_' . md5( $url ) );
+            delete_transient( 'bdm_data_' . md5( $url ) );
             return;
         }
-        $teams = get_option( 'osc_badminton_teams', array() );
+        $teams = get_option( 'badminton_ergebnisse_teams', array() );
         foreach ( $teams as $team ) {
             if ( ! empty( $team['url'] ) ) {
-                delete_transient( 'osc_badminton_' . md5( $team['url'] ) );
-                delete_transient( 'osc_badminton_data_' . md5( $team['url'] ) );
+                delete_transient( 'bdm_matches_' . md5( $team['url'] ) );
+                delete_transient( 'bdm_data_' . md5( $team['url'] ) );
             }
         }
         if ( file_exists( $this->cookie_file ) ) {
@@ -87,22 +86,18 @@ class OSC_Badminton_Scraper {
     private function fetch_team_data( $url ) {
         $url_type = self::detect_url_type( $url );
 
-        // If it's a matches URL, we need the team URL - derive it
         if ( $url_type === 'matches' ) {
             $matches_url = $url;
             $team_page_body = null;
         } else {
-            // It's a team URL - fetch the team overview page
             $team_page_body = $this->fetch_page( $url );
             if ( is_wp_error( $team_page_body ) ) {
                 return $team_page_body;
             }
 
-            // Extract matches URL from the team page
             $matches_url = $this->extract_matches_url( $team_page_body, $url );
         }
 
-        // Parse standings from team page
         $standings = null;
         $league_name = '';
         $team_name = '';
@@ -114,7 +109,6 @@ class OSC_Badminton_Scraper {
             $team_name   = $parsed['team_name'];
         }
 
-        // Fetch matches
         $matches = array();
         if ( ! empty( $matches_url ) ) {
             $matches_body = $this->fetch_page( $matches_url );
@@ -247,7 +241,6 @@ class OSC_Badminton_Scraper {
         $parsed_base = wp_parse_url( $base_url );
         $base = $parsed_base['scheme'] . '://' . $parsed_base['host'];
 
-        // Find any link containing "teammatches"
         $links = $xpath->query( "//a[contains(@href, 'teammatches')]" );
         if ( $links->length > 0 ) {
             $href = $links->item( 0 )->getAttribute( 'href' );
@@ -255,7 +248,6 @@ class OSC_Badminton_Scraper {
             return $this->resolve_url( $href, $base, $parsed_base['path'] ?? '/' );
         }
 
-        // Fallback: find "mehr Spiele..." link
         $links = $xpath->query( "//a[contains(text(), 'mehr Spiele')]" );
         if ( $links->length > 0 ) {
             $href = $links->item( 0 )->getAttribute( 'href' );
@@ -274,9 +266,7 @@ class OSC_Badminton_Scraper {
 
         $xpath = new DOMXPath( $doc );
 
-        // Extract team name - look for "Mannschaft:" text in various elements
         $team_name = '';
-        // Try multiple selectors
         $selectors = array(
             "//h3[contains(text(), 'Mannschaft:')]",
             "//h2[contains(text(), 'Mannschaft:')]",
@@ -288,8 +278,7 @@ class OSC_Badminton_Scraper {
             foreach ( $nodes as $node ) {
                 $text = trim( $node->textContent );
                 if ( strpos( $text, 'Mannschaft:' ) !== false || strpos( $text, 'Mannschaft' ) !== false ) {
-                    // Extract name after "Mannschaft:"
-                    if ( preg_match( '/Mannschaft:\s*(.+?)(?:\s*\([^)]+\))?(?:\s*[-–]\s*\w+)?$/u', $text, $m ) ) {
+                    if ( preg_match( '/Mannschaft:\s*(.+?)(?:\s*\([^)]+\))?(?:\s*[-\x{2013}]\s*\w+)?$/u', $text, $m ) ) {
                         $team_name = trim( $m[1] );
                     }
                     if ( ! empty( $team_name ) ) {
@@ -298,7 +287,6 @@ class OSC_Badminton_Scraper {
                 }
             }
         }
-        // Fallback: extract from page title
         if ( empty( $team_name ) ) {
             $titles = $xpath->query( '//title' );
             if ( $titles->length > 0 ) {
@@ -308,16 +296,13 @@ class OSC_Badminton_Scraper {
                 }
             }
         }
-        // Remove star/favorite characters
         $team_name = trim( preg_replace( '/[\x{2605}\x{2606}\x{2764}]/u', '', $team_name ) );
 
-        // Extract league name from h2
         $league_name = '';
         $h2_nodes = $xpath->query( "//h2[contains(@class, '') and (contains(text(), 'Liga') or contains(text(), 'liga') or contains(text(), 'O19') or contains(text(), 'Klasse'))]" );
         if ( $h2_nodes->length > 0 ) {
             $league_name = trim( $h2_nodes->item( 0 )->textContent );
         }
-        // Fallback: find any h2 before the standings table
         if ( empty( $league_name ) ) {
             $h2_all = $xpath->query( "//h2" );
             foreach ( $h2_all as $h2 ) {
@@ -329,7 +314,6 @@ class OSC_Badminton_Scraper {
             }
         }
 
-        // Parse standings table
         $standings = $this->parse_standings( $xpath );
 
         return array(
@@ -362,7 +346,6 @@ class OSC_Badminton_Scraper {
             $is_promote  = strpos( $class, 'promote' ) !== false;
             $is_demote   = strpos( $class, 'demote' ) !== false;
 
-            // Columns: 0=rank, 1=name, 2=played, 3=points_w, 4=":", 5=points_l, 6=won, 7=draw, 8=lost, 9=games_w, 10=":", 11=games_l
             $standings[] = array(
                 'rank'       => trim( $cells->item( 0 )->textContent ),
                 'name'       => trim( $cells->item( 1 )->textContent ),
@@ -441,17 +424,13 @@ class OSC_Badminton_Scraper {
     }
 
     private function resolve_url( $href, $base, $current_path ) {
-        // Absolute URL
         if ( strpos( $href, 'http' ) === 0 ) {
             return $href;
         }
-        // Absolute path
         if ( strpos( $href, '/' ) === 0 ) {
             return $base . $href;
         }
-        // Relative path (e.g. ../teammatches.aspx?...)
         $dir = rtrim( dirname( $current_path ), '/' );
-        // Handle ../ by going up one level
         while ( strpos( $href, '../' ) === 0 ) {
             $href = substr( $href, 3 );
             $dir  = dirname( $dir );

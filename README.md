@@ -1,4 +1,4 @@
-# Turnier.de-Ergebnisse
+# Badminton Ergebnisse
 
 WordPress-Plugin zum automatischen Anzeigen von Badminton-Spielergebnissen und Tabellenstaenden von [dbv.turnier.de](https://dbv.turnier.de).
 
@@ -11,6 +11,7 @@ WordPress-Plugin zum automatischen Anzeigen von Badminton-Spielergebnissen und T
 - **Cookie-Wall-Bypass**: Umgeht beide Cookie-Dialoge (DBV + turnier.de) automatisch
 - **Responsive Design**: Mobile-optimiert, Spielort-Spalte wird auf kleinen Bildschirmen ausgeblendet
 - **Theme-kompatibel**: Schriftart und Header-Farbe werden vom WordPress-Theme uebernommen
+- **Generisch einsetzbar**: Heim-/Auswaertserkennung basiert auf dem konfigurierten Mannschaftsnamen
 - **Hervorhebungen**:
   - Eigene Mannschaft in der Tabelle farblich hervorgehoben (blau/gold)
   - Aufstiegs- und Abstiegsplaetze farblich markiert
@@ -19,8 +20,8 @@ WordPress-Plugin zum automatischen Anzeigen von Badminton-Spielergebnissen und T
 
 ## Installation
 
-1. Den Ordner `osc-badminton-ergebnisse` in `wp-content/plugins/` kopieren
-2. Im WordPress-Admin unter **Plugins** das Plugin **OSC Badminton Ergebnisse** aktivieren
+1. Den Ordner `badminton-ergebnisse` in `wp-content/plugins/` kopieren
+2. Im WordPress-Admin unter **Plugins** das Plugin **Badminton Ergebnisse** aktivieren
 3. Unter **Einstellungen > Badminton Ergebnisse** die Mannschaft(en) konfigurieren
 
 ## Konfiguration
@@ -28,7 +29,7 @@ WordPress-Plugin zum automatischen Anzeigen von Badminton-Spielergebnissen und T
 ### Mannschaft hinzufuegen
 
 1. Navigiere zu **Einstellungen > Badminton Ergebnisse**
-2. Trage einen **Namen** ein (z.B. "OSC BG Essen-Werden 1")
+2. Trage einen **Namen** ein (z.B. "Mein Verein 1") - wird auch zur Heim-/Auswaertserkennung verwendet
 3. Trage die **Team-URL** von turnier.de ein
 
 Die Team-URL findest du auf turnier.de unter der jeweiligen Mannschaftsseite. Sie hat folgendes Format:
@@ -90,15 +91,15 @@ Alle Shortcodes unterstuetzen auch eine direkte URL als Parameter:
 ## Dateistruktur
 
 ```
-osc-badminton-ergebnisse/
-  osc-badminton-ergebnisse.php   # Hauptdatei: Plugin-Header, Shortcodes, Rendering
+badminton-ergebnisse/
+  badminton-ergebnisse.php    # Hauptdatei: Plugin-Header, Shortcodes, Rendering
   includes/
-    class-scraper.php             # Scraping-Logik (curl + DOMDocument)
-    class-admin.php               # Admin-Einstellungsseite
+    class-scraper.php          # Scraping-Logik (curl + DOMDocument)
+    class-admin.php            # Admin-Einstellungsseite
   assets/
     css/
-      frontend.css                # Tabellen-Styling (Hervorhebungen)
-      admin.css                   # Admin-Styling
+      frontend.css             # Tabellen-Styling (Hervorhebungen)
+      admin.css                # Admin-Styling
 ```
 
 ## Technische Details
