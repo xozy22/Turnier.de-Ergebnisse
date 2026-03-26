@@ -13,7 +13,7 @@ WordPress-Plugin zum automatischen Anzeigen von Badminton-Spielergebnissen und T
 - **Theme-kompatibel**: Schriftart und Header-Farbe werden vom WordPress-Theme uebernommen
 - **Generisch einsetzbar**: Heim-/Auswaertserkennung basiert auf dem konfigurierten Mannschaftsnamen
 - **Hervorhebungen**:
-  - Eigene Mannschaft in der Tabelle farblich hervorgehoben (blau/gold)
+  - Eigene Mannschaft in Tabelle und Ergebnissen **fett** hervorgehoben
   - Aufstiegs- und Abstiegsplaetze farblich markiert
   - Siege (gruen), Niederlagen (rot), Unentschieden (gelb)
   - Heimspiele mit goldenem Rand

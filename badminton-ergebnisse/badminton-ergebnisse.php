@@ -261,14 +261,24 @@ class Badminton_Ergebnisse {
 
         foreach ( $matches as $match ) {
             $is_home     = $this->is_own_team( $match['home'], $team_keywords );
+            $is_guest    = $this->is_own_team( $match['guest'], $team_keywords );
             $row_class   = $is_home ? 'bdm-home-game' : 'bdm-away-game';
             $result_class = $this->get_result_class( $match, $is_home );
 
+            $home_name  = esc_html( $match['home'] );
+            $guest_name = esc_html( $match['guest'] );
+            if ( $is_home ) {
+                $home_name = '<strong>' . $home_name . '</strong>';
+            }
+            if ( $is_guest ) {
+                $guest_name = '<strong>' . $guest_name . '</strong>';
+            }
+
             $html .= '<tr class="' . esc_attr( $row_class ) . '">';
             $html .= '<td class="bdm-date">' . esc_html( $match['date'] ) . '</td>';
-            $html .= '<td class="bdm-team bdm-home">' . esc_html( $match['home'] ) . '</td>';
+            $html .= '<td class="bdm-team bdm-home">' . $home_name . '</td>';
             $html .= '<td class="bdm-vs">:</td>';
-            $html .= '<td class="bdm-team bdm-guest">' . esc_html( $match['guest'] ) . '</td>';
+            $html .= '<td class="bdm-team bdm-guest">' . $guest_name . '</td>';
             $display_result = str_replace( array( '{', '}' ), '', $match['result'] );
             $html .= '<td class="bdm-result ' . esc_attr( $result_class ) . '">' . esc_html( $display_result ) . '</td>';
             $html .= '<td class="bdm-venue bdm-hide-mobile">' . esc_html( $match['venue'] ) . '</td>';

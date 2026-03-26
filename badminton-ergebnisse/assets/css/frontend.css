@@ -150,13 +150,11 @@
 
 /* Eigenes Team hervorheben */
 .bdm-standings-table tbody tr.bdm-selected {
-    background: #e8f0fe !important;
-    border-left: 4px solid #FFD700;
     font-weight: 700;
 }
 
 .bdm-standings-table tbody tr.bdm-selected td {
-    color: #003399;
+    font-weight: 700;
 }
 
 /* Aufstiegsplaetze */
