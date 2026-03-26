@@ -281,7 +281,13 @@ class Badminton_Ergebnisse {
             $html .= '<td class="bdm-team bdm-guest">' . $guest_name . '</td>';
             $display_result = str_replace( array( '{', '}' ), '', $match['result'] );
             $html .= '<td class="bdm-result ' . esc_attr( $result_class ) . '">' . esc_html( $display_result ) . '</td>';
-            $html .= '<td class="bdm-venue bdm-hide-mobile">' . esc_html( $match['venue'] ) . '</td>';
+            $venue = esc_html( $match['venue'] );
+            // Insert line break after the 2nd comma
+            $parts = explode( ',', $venue );
+            if ( count( $parts ) > 2 ) {
+                $venue = implode( ',', array_slice( $parts, 0, 2 ) ) . ',<br>' . ltrim( implode( ',', array_slice( $parts, 2 ) ) );
+            }
+            $html .= '<td class="bdm-venue bdm-hide-mobile">' . $venue . '</td>';
             $html .= '</tr>';
         }
 
