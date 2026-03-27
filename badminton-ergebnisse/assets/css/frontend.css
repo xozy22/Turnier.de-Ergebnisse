@@ -162,6 +162,10 @@
     background: #edf7ed !important;
 }
 
+.bdm-standings-table tbody tr.bdm-promote:hover {
+    background: #d8f0d8 !important;
+}
+
 .bdm-standings-table tbody tr.bdm-promote .bdm-rank {
     color: #28a745;
 }
@@ -169,6 +173,10 @@
 /* Abstiegsplaetze */
 .bdm-standings-table tbody tr.bdm-demote {
     background: #fdf0f0 !important;
+}
+
+.bdm-standings-table tbody tr.bdm-demote:hover {
+    background: #f8e0e0 !important;
 }
 
 .bdm-standings-table tbody tr.bdm-demote .bdm-rank {
